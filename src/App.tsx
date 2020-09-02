@@ -5,7 +5,7 @@ import QuestionCard from './components/QuestionCard';
 // Types
 import { QuestionState, Difficulty } from './API';
 
-type AnswerObject = {
+export type AnswerObject = {
   question: string;
   answer: string;
   correct: boolean;
@@ -14,7 +14,7 @@ type AnswerObject = {
 
 const TOTAL_QUESTIONS = 10;
 
-const url = 'https://opentdb.com/api.php?amount=10&type=multiple'
+// const url = 'https://opentdb.com/api.php?amount=10&type=multiple'
 
 const App = () => {
   const [loading, setLoading] = useState(false);
@@ -43,10 +43,34 @@ const App = () => {
   }
 
   const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!gameOver) {
+      //User answer
+      const answer = e.currentTarget.value;
+      //Check answer against correct answer
+      const correct = questions[number].correct_answer === answer;
+      // add socre if answer is correct
+      if (correct) setScore(prev => prev + 1);
+      // save answer in the array for user answers
+      const answerObject = {
+        question: questions[number].question,
+        answer,
+        correct,
+        correctAnswer: questions[number].correct_answer,
 
+      };
+      setUserAnswers(prev => [...prev, answerObject]);
+    }
   }
 
   const nextQuestion = () => {
+    // Move to next question if not last
+    const nextQuestion = number + 1;
+
+    if (nextQuestion === TOTAL_QUESTIONS) {
+      setGameOver(true);
+    } else {
+      setNumber(nextQuestion);
+    }
 
   }
 
